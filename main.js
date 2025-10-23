@@ -1,3 +1,7 @@
+//Last Names: Ortega, De Leon, Lee, Robenta
+//Language: JavaScript
+//Paradigm(s): Object-Oriented, Functional, Procedural
+
 //Allows getting user input from the terminal.
 const scan = require('readline-sync'); // Import readline-sync for terminal input
 
@@ -162,8 +166,16 @@ function checkAccountExists() {
  * @returns {void} Does not return a value; adds specified deposit amount to global variable 'balance'.
  */
 function DepositAmount() {
-        if (!checkAccountExists()) { // Prevent deposit if no account
+        // if (!checkAccountExists()) { // Prevent deposit if no account
+        //         ReturnToMenuPrompt();
+        // }
+
+        let accountInput = scan.question('Enter Account Name: '); // Ask for account name
+
+        if (accountInput !== accountName) { // Validate account name
+                console.log('Account name does not match. Withdrawal cancelled.');
                 ReturnToMenuPrompt();
+                return;
         }
 
         console.log('Deposit Amount');
@@ -180,7 +192,7 @@ function DepositAmount() {
                         deposit = parseFloat(scan.question('Deposit Amount: ')); // Retry
                 } else {
                         balance += deposit; // Add deposit to balance
-                        console.log('New Balance: ' + balance);
+                        console.log('New Balance: ' + balance.toFixed(2));
                         ReturnToMenuPrompt(); // Ask user to return or exit
                 }
         }
@@ -194,8 +206,16 @@ function DepositAmount() {
  * @returns {void} Does not return a value; subtracts specified withdraw amount to global variable 'balance'.
  */
 function WithdrawAmount() {
-        if (!checkAccountExists()) { // Ensure account exists
+        // if (!checkAccountExists()) { // Ensure account exists
+        //         ReturnToMenuPrompt();
+        // }
+
+        let accountInput = scan.question('Enter Account Name: '); // Ask for account name
+
+        if (accountInput !== accountName) { // Validate account name
+                console.log('Account name does not match. Withdrawal cancelled.');
                 ReturnToMenuPrompt();
+                return;
         }
 
         console.log('Withdraw Amount');
@@ -215,7 +235,7 @@ function WithdrawAmount() {
                 withdraw = parseFloat(scan.question('Withdraw Amount: '))
         } else {
                 balance -= withdraw; // Deduct from balance
-                console.log('New Balance: ' + balance);
+                console.log('New Balance: ' + balance.toFixed(2));
                 ReturnToMenuPrompt(); // Ask user to return or exit
         }
         }
@@ -239,7 +259,15 @@ function displayCurrencies() {
  * @returns {void} Does not return a value; it manages the currency exchange workflow.
  */
 function CurrencyExchange() {
-        if (!checkAccountExists()) { // Stop if no account exists
+        // if (!checkAccountExists()) { // Stop if no account exists
+        //         ReturnToMenuPrompt();
+        //         return;
+        // }
+
+        let accountInput = scan.question('Enter Account Name: '); // Ask for account name
+
+        if (accountInput !== accountName) { // Validate account name
+                console.log('Account name does not match. Withdrawal cancelled.');
                 ReturnToMenuPrompt();
                 return;
         }
@@ -338,10 +366,19 @@ function CurrencyExchange() {
  * @returns {void} Does not return a value; it updates the exchange rates in the global variable array 'exchangeRates'.
  */
 function RecordExchangeRates() {
-        if (!checkAccountExists()) { // Stop if no account exists
+        // if (!checkAccountExists()) { // Stop if no account exists
+        //         ReturnToMenuPrompt();
+        //         return;
+        // }
+
+        let accountInput = scan.question('Enter Account Name: '); // Ask for account name
+
+        if (accountInput !== accountName) { // Validate account name
+                console.log('Account name does not match. Withdrawal cancelled.');
                 ReturnToMenuPrompt();
                 return;
         }
+
         console.log('Record Exchange Rates');
 
         displayCurrencies(); // Show all currencies
@@ -378,7 +415,15 @@ function RecordExchangeRates() {
  * @returns {void} Does not return a value; it displays interest computation details.
  */
 function ShowInterestComputation() {
-        if (!checkAccountExists()) { // Stop if no account exists
+        // if (!checkAccountExists()) { // Stop if no account exists
+        //         ReturnToMenuPrompt();
+        //         return;
+        // }
+
+        let accountInput = scan.question('Enter Account Name: '); // Ask for account name
+
+        if (accountInput !== accountName) { // Validate account name
+                console.log('Account name does not match. Withdrawal cancelled.');
                 ReturnToMenuPrompt();
                 return;
         }
@@ -410,3 +455,4 @@ function ShowInterestComputation() {
 }
 
 MainMenu(); // Start the program by showing the main menu
+
