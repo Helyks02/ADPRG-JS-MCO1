@@ -15,7 +15,7 @@ let accountName;
  * @type {number}
  * @default 0
  */
-let balance = 0;
+let balance = 0.00;
 
 /**
  * The list of supported currencies with their symbols.
@@ -44,9 +44,9 @@ const currencyList = [
  * @default [1.0]
  * @example
  * // Example contents after recording rates:
- * // [1.0, 52.0, 0.37, 68.0, 70.0, 7.2]
+ * // [1.00, 52.00, 0.37, 68.00, 70.00, 7.20]
  */
-const exchangeRates = [1.0];
+const exchangeRates = [1.00];
 
 /** 
  * Prompts the user whether to return to Menu or exit the program.
@@ -90,22 +90,22 @@ function DisplayMenuOptions() {
  */
 function HandleMenuChoice(choice) {
         switch (choice) {
-                case '1':
+                case 1:
                         RegisterAccountName();
                         break;
-                case '2':
+                case 2:
                         DepositAmount();
                         break;
-                case '3':
+                case 3:
                         WithdrawAmount();
                         break;
-                case '4':
+                case 4:
                         CurrencyExchange();
                         break;
-                case '5':
+                case 5:
                         RecordExchangeRates();
                         break;
-                case '6':
+                case 6:
                         ShowInterestComputation();
                         break;
                 default:
@@ -116,7 +116,7 @@ function HandleMenuChoice(choice) {
 /**
  * Shows the main menu and routes the user to functions that they chose.
  * @function MainMenu
- * @returns {void}
+ * @returns {void} Does not return a value; it displays the main menu and handles user choice.
  */
 function MainMenu() {
         DisplayMenuOptions();
@@ -127,24 +127,40 @@ function MainMenu() {
 /**
  * Registers the account name given by the user.
  * @function RegisterAccountName
- * @returns {void}
+ * @returns {void} Does not return a value; sets the global variable 'accountName'.
  */
 function RegisterAccountName() {
         console.log('Register Account Name');
         accountName = scan.question('Enter Account Name: ');
         ReturnToMenuPrompt();
 }
-
 /**
- * Prompts the user in the terminal for deposit amount and adds to balance.
+ * Checks if an account name is registered.
+ * @function checkAccountExists
+ * @global {string|undefined} accountName - The registered account name of the user.
+ * @returns {boolean} Returns false if no account name is registered; otherwise, returns true.
+ */
+function checkAccountExists() {
+        if (accountName === undefined) {
+                console.log('No account registered yet. Please register an account name first.');
+                return false;
+        }
+        return true;
+}
+/**
+ * Prompts the user in the terminal for deposit amount and adds to 'balance'.
  * @function DepositAmount
  * @global {number} balance - The account's balance.
- * @returns {void} Adds specified deposit amount to global variable 'balance'.
+ * @returns {void} Does not return a value; adds specified deposit amount to global variable 'balance'.
  */
 function DepositAmount() {
+        if (!checkAccountExists()) {
+                ReturnToMenuPrompt();
+        }
+
         console.log('Deposit Amount');
         console.log(`Account Name: ${accountName}`);
-        console.log(`Current Balance: ${balance}`);
+        console.log(`Current Balance: ${balance.toFixed(2)}`);
         console.log(`Currency: ${currencyList[0].symbol}`);
         console.log('');
 
@@ -161,10 +177,20 @@ function DepositAmount() {
 
 }
 
+/**
+ * Prompts the user in the terminal for withdraw amount and subtracts from 'balance'.
+ * @function DepositAmount
+ * @global {number} balance - The account's balance.
+ * @returns {void} Does not return a value; subtracts specified withdraw amount to global variable 'balance'.
+ */
 function WithdrawAmount() {
+        if (!checkAccountExists()) {
+                ReturnToMenuPrompt();
+        }
+
         console.log('Withdraw Amount');
         console.log(`Account Name: ${accountName}`);
-        console.log(`Current Balance: ${balance}`);
+        console.log(`Current Balance: ${balance.toFixed(2)}`);
         console.log(`Currency: ${currencyList[0].symbol}`);
         console.log('');
 
@@ -183,6 +209,11 @@ function WithdrawAmount() {
         }
 }
 
+/**
+ * Displays the list of supported currencies with their symbols.
+ * @function displayCurrencies
+ * @returns {void} Does not return a value; it displays the list of currencies.
+ */
 function displayCurrencies() {
         for (let i = 0; i < currencyList.length; i++) {
                 console.log(`[${i + 1}]. ${currencyList[i].currency} (${currencyList[i].symbol})`);
@@ -190,6 +221,11 @@ function displayCurrencies() {
         console.log('');
 }
 
+/**
+ * Handles the currency exchange process.
+ * @function CurrencyExchange
+ * @returns {void} Does not return a value; it manages the currency exchange workflow.
+ */
 function CurrencyExchange() {
 
         console.log('Foreign Currency Exchange');
@@ -201,9 +237,19 @@ function CurrencyExchange() {
 
         while (true) {
                 sourceCurrency = parseInt(scan.question('Source Currency Option: '));
-                if (!isNaN(sourceCurrency) && sourceCurrency >= 1 && sourceCurrency <= currencyList.length) {
+                if (!isNaN(sourceCurrency) &&
+                        sourceCurrency >= 1 &&
+                        sourceCurrency <= currencyList.length &&
+                        exchangeRates[sourceCurrency - 1] !== undefined) {
                         break;
                 }
+
+                if (exchangeRates[sourceCurrency - 1] === undefined) {
+                        console.log('Exchange rate for selected currency is not recorded yet. Please record the exchange rate first.');
+                        ReturnToMenuPrompt();
+                        return;
+                }
+
                 console.log('Invalid choice! Please try again.');
         }
 
@@ -230,20 +276,27 @@ function CurrencyExchange() {
                 if (!isNaN(exchangeCurrency) &&
                         exchangeCurrency >= 1 &&
                         exchangeCurrency <= currencyList.length &&
-                        exchangeCurrency !== sourceCurrency) {
+                        exchangeCurrency !== sourceCurrency &&
+                        exchangeRates[exchangeCurrency - 1] !== undefined) {
                         break;
+                }
+
+                if (exchangeRates[exchangeCurrency - 1] === undefined) {
+                        console.log('Exchange rate for selected currency is not recorded yet. Please record the exchange rate first.');
+                        ReturnToMenuPrompt();
+                        return;
                 }
 
                 console.log('Invalid choice! Please try again.');
         }
 
-        exchangeRate = currencyList[exchangeCurrency - 1].rate;
+        exchangeRate = exchangeRates[exchangeCurrency - 1];
 
-        exchangedAmount = sourceAmount * (exchangeRate / sourceRate);
+        exchangedAmount = sourceAmount * (sourceRate / exchangeRate);
 
         console.log(`Exchanged Amount: ${exchangedAmount.toFixed(2)} ${currencyList[exchangeCurrency - 1].symbol}`);
 
-        let choice = parseInt(scan.question('Convert Another Currency (Y/N)?: '))
+        let choice = scan.question('Convert Another Currency (Y/N)?: ');
 
         while (true) {
 
@@ -258,11 +311,15 @@ function CurrencyExchange() {
                 }
                 else {
                         console.log('Invalid input. Try again!')
-                        choice = parseInt(scan.question('Convert another currency (Y/N): '));
+                        choice = scan.question('Convert another currency (Y/N): ');
                 }
         }
 }
-
+/**
+ * Records the exchange rates for supported currencies.
+ * @function RecordExchangeRates
+ * @returns {void} Does not return a value; it updates the exchange rates in the global variable array 'exchangeRates'.
+ */
 function RecordExchangeRates() {
         console.log('Record Exchange Rates');
 
@@ -292,9 +349,43 @@ function RecordExchangeRates() {
 
                 console.log('Invalid rate! Please enter a value greater than 0.');
         }
-}
-function ShowInterestComputation() {
 
+        ReturnToMenuPrompt();
+}
+/** * Shows interest computation based on the current balance.
+ * @function ShowInterestComputation
+ * @returns {void} Does not return a value; it displays interest computation details.
+ */
+function ShowInterestComputation() {
+        if (!checkAccountExists()) {
+                ReturnToMenuPrompt();
+                return;
+        }
+
+        const interestRate = 0.05;
+        const daysInYear = 365;
+
+        console.log('Show Interest Amount');
+        console.log(`Account Name: ${accountName}`);
+        console.log(`Current Balance: ${balance.toFixed(2)}`);
+        console.log(`Currency: ${currencyList[0].symbol}`);
+        console.log('Interest Rate: ' + (interestRate * 100) + '%');
+        console.log('');
+
+        let interestAmount = parseFloat((balance * (interestRate / daysInYear)).toFixed(2));
+        let totalAmount = balance;
+        let periodInDays = parseInt(scan.question('Total Number of Days: '));
+        let count = 0;
+
+        console.log('Day | Interest | Balance');
+
+        while (count < periodInDays) {
+                totalAmount += interestAmount;
+                console.log(`${count + 1}   | ${interestAmount}     | ${totalAmount.toFixed(2)}`);
+                count++;
+        }
+
+        ReturnToMenuPrompt();
 }
 
 MainMenu();
