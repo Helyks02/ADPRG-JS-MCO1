@@ -135,7 +135,11 @@ function MainMenu() {
  */
 function RegisterAccountName() {
         console.log('Register Account Name');
+        if (accountName !== undefined) { // If account already registered
+                console.log(`An account already exists.`); // Show current name
+        } else { // If no account registered yet
         accountName = scan.question('Enter Account Name: '); // Set global variable 'accountName'
+        }
         ReturnToMenuPrompt(); // Ask user to return or exit
 }
 /**
