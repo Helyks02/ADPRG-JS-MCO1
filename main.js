@@ -235,6 +235,10 @@ function displayCurrencies() {
  * @returns {void} Does not return a value; it manages the currency exchange workflow.
  */
 function CurrencyExchange() {
+        if (!checkAccountExists()) { // Stop if no account exists
+                ReturnToMenuPrompt();
+                return;
+        }
 
         console.log('Foreign Currency Exchange');
         displayCurrencies(); // Show all currency options
@@ -330,6 +334,10 @@ function CurrencyExchange() {
  * @returns {void} Does not return a value; it updates the exchange rates in the global variable array 'exchangeRates'.
  */
 function RecordExchangeRates() {
+        if (!checkAccountExists()) { // Stop if no account exists
+                ReturnToMenuPrompt();
+                return;
+        }
         console.log('Record Exchange Rates');
 
         displayCurrencies(); // Show all currencies
